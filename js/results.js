@@ -3,7 +3,7 @@
 
     /* URL de la implementación del Apps Script (la misma que usan los otros
        formularios; termina en /exec) */
-    var URL_HOJA = "PEGA_AQUI_LA_URL_EXEC";
+    var URL_HOJA = "https://script.google.com/macros/s/AKfycbyp_upOdCe6n5SR8_sAm1I_T52RXs-_KwqDn85JRuHs5D4BDA7YVXL_ZxJ6VQanwrPr5w/exec";
 
     /* Envía a la hoja de Google una fila con la respuesta a cada pregunta
        (✓/✗ + texto de la opción elegida) y los aciertos. Solo una vez por
