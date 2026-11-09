@@ -20,6 +20,7 @@
 
             try {
                 sessionStorage.setItem("respuesta-" + page, btn.dataset.value);
+                if (page === "1") sessionStorage.removeItem("momentum-enviado");
             } catch (e) {
                 /* sessionStorage no disponible: el test sigue funcionando,
                    simplemente no se podrá calcular la puntuación final */

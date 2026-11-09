@@ -1,6 +1,52 @@
 (function () {
     "use strict";
 
+    /* URL de la implementación del Apps Script (la misma que usan los otros
+       formularios; termina en /exec) */
+    var URL_HOJA = "PEGA_AQUI_LA_URL_EXEC";
+
+    /* Envía a la hoja de Google una fila con la respuesta a cada pregunta
+       (✓/✗ + texto de la opción elegida) y los aciertos. Solo una vez por
+       intento: si se recarga la página de resultados no se duplica. */
+    function enviarResultados(blocks, total, score) {
+        try {
+            if (sessionStorage.getItem("momentum-enviado") === "1") return;
+        } catch (e) { /* sin sessionStorage: se envía igualmente */ }
+
+        var datos = { _formulario: "Momentum Derma", Aciertos: score + "/" + total };
+        var respondidas = 0;
+
+        blocks.forEach(function (block) {
+            var n = block.dataset.question;
+            var given = readAnswer(n);
+            var texto = "";
+            if (given) {
+                var opt = block.querySelector('.results__option[data-value="' + given + '"]');
+                if (opt) {
+                    var t = opt.querySelector(".results__option-text");
+                    texto = (opt.dataset.correct === "true" ? "✓ " : "✗ ") +
+                        (t ? t.textContent : given).trim();
+                    respondidas++;
+                }
+            }
+            datos["Pregunta " + n] = texto;
+        });
+
+        /* Si se entra a esta página sin haber hecho el test, no se envía nada */
+        if (!respondidas || URL_HOJA.indexOf("/exec") === -1) return;
+
+        try {
+            fetch(URL_HOJA, {
+                method: "POST",
+                mode: "no-cors",
+                keepalive: true,
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(datos)
+            });
+            sessionStorage.setItem("momentum-enviado", "1");
+        } catch (e) { /* si falla el envío, los resultados se muestran igual */ }
+    }
+
     /* Mensajes de marca según nº de aciertos (0-12) */
     var MESSAGES = [
         { title: "El cielo por descubrir", text: "Momentum Derma reúne doce protocolos bajo un mismo cielo, el aprendizaje empieza ahora." },
@@ -71,6 +117,8 @@
     var totalEl = document.getElementById("totalQuestions");
     var titleEl = document.getElementById("resultTitle");
     var messageEl = document.getElementById("resultMessage");
+
+    enviarResultados(blocks, total, score);
 
     if (scoreEl) scoreEl.textContent = score;
     if (totalEl) totalEl.textContent = total;
