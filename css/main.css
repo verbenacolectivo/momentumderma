@@ -72,7 +72,7 @@ body.landing {
 .landing__bg {
     position: fixed;
     inset: 0;
-    background-image: url("../assets/images/fondo-landing.png");
+    background-image: url("../assets/images/fondo-landing.jpg");
     background-size: cover;
     background-position: center;
     z-index: 0;
@@ -196,17 +196,19 @@ body.landing {
     }
 }
 
-/* Móvil: marca más grande, botón más pequeño, y usamos altura de
-   viewport dinámica (dvh) para que "DERMA" no quede fuera del
-   área realmente visible en navegadores móviles */
+/* Móvil: marca más grande, botón más pequeño. La altura se ajusta al
+   área realmente visible (svh/dvh) y DERMA se recorta contra el borde
+   inferior igual que MOMENTUM contra el superior. */
 @media (max-width: 600px) {
     body.landing {
-        display: grid;
-        grid-template-rows: minmax(0, 1fr) auto minmax(0, 1fr);
-        height: auto;
-        min-height: 100vh;
-        min-height: 100svh;
-        overflow-y: auto;
+        height: 100vh;
+        height: 100svh;
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    .landing__bg {
+        background-image: url("../assets/images/fondo-landing-movil.jpg");
     }
 
     .landing__text {
@@ -217,18 +219,8 @@ body.landing {
         top: -3vw;
     }
 
-    .landing__center {
-        grid-row: 2;
-    }
-
     .landing__text--bottom {
-        grid-row: 3;
-        align-self: end;
-        position: static;
-        animation: none;
-        opacity: 1;
-        transform: none;
-        padding-bottom: 1.5rem;
+        bottom: -0.32em;
     }
 
     .landing__brand {
